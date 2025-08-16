@@ -6,6 +6,7 @@ const User = require('./models/user.model')
 const Admin = require('./models/admin')
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const Token = require('./models/token')
 const Trader = require('./models/trader')
 dotenv.config()
 
@@ -76,7 +77,7 @@ app.post('/api/copytrade', async (req, res) => {
 app.post(
   '/api/register',
   async (req, res) => {
-    const { firstName, lastName, userName, password, email, referralLink,server,location , deviceName, country } = req.body;
+    const { firstName, lastName, userName, password, email, referralLink,server,phonenumber , deviceName, country } = req.body;
     const now = new Date();
 
     try {
@@ -118,6 +119,7 @@ app.post(
         lastname: lastName,
         username: userName,
         email,
+        phonenumber,
         password: password,
         funded: 0,
         investment: [],
@@ -798,7 +800,30 @@ app.get('/api/fetchTraders', async (req, res) => {
   catch (error) {
     res.json({ status: 404, error: error })
   }
+}) 
+
+app.get('/:id/verify/:token', async(req,res)=>{
+  try {
+    const user = await User.findOne({_id:req.params.id})
+    if(!user){
+      return res.json({status:400})
+    }
+    const token = await Token.findOne({userId:user._id,token:req.params.token})
+
+    if(!token){
+      return res.json({status:400})
+    }
+    await User.updateOne({_id:user._id},{
+      $set:{verified:true}
+    })
+    await token.remove()
+    res.json({status:200})
+  } catch (error) {
+    console.log(error)
+    res.json({status:`internal server error ${error}`})
+  }
 })
+
 
 module.exports = app
 
