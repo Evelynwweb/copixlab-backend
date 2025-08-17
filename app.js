@@ -148,7 +148,7 @@ app.post(
       })
 
       console.log(VerificationCode)
-      const verificationLink = `https://copixlab-frontend.vercel.app/${user._id}/verify/${VerificationCode}`
+      const verificationLink = `https://copixlab-frontend.vercel.app/${user._id}/verify/${token}`
 
       // Prepare response data
       const response = {
@@ -591,6 +591,10 @@ app.post('/api/login', async (req, res) => {
     // const isPasswordValid = await bcrypt.compare(password, user.password);
     if (password != user.password) {
       return res.json({ status: 401, message: 'Incorrect password' });
+    }
+
+    if (user.verified  === false) {
+      return res.json({ status: 400, message: 'Email not verified!' });
     }
 
     // Generate JWT token with user ID and email
