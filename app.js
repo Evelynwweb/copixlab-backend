@@ -18,12 +18,24 @@ const jwtSecret = process.env.JWT_SECRET;
 app.use(cors())
 app.use(express.json())
 
-mongoose.connect(process.env.ATLAS_URI).then(() => {
-    console.log('Connected to MongoDB');
-})
-.catch((error) => {
-    console.error('Error connecting to MongoDB:', error);
-});
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) {
+    return;
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.ATLAS_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    isConnected = db.connections[0].readyState;
+    console.log("✅ MongoDB connected");
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
+  }
+};
+connectDB()
 
 app.post('/api/verify', async (req, res) => {
   const  {
