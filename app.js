@@ -148,7 +148,7 @@ app.post(
       })
 
       console.log(VerificationCode)
-      const verificationLink = `https://www.copixlab/${user._id}/verify/${VerificationCode}`
+      const verificationLink = `https://copixlab-frontend.vercel.app/${user._id}/verify/${VerificationCode}`
 
       // Prepare response data
       const response = {
