@@ -160,7 +160,7 @@ app.post(
       })
 
       console.log(VerificationCode)
-      const verificationLink = `https://copixlab-frontend.vercel.app/${user._id}/verify/${token}`
+      const verificationLink = `https://www.copixlab.com/${user._id}/verify/${token}`
 
       // Prepare response data
       const response = {
