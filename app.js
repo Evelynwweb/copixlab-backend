@@ -141,6 +141,14 @@ app.post(
         process.env.JWT_SECRET || 'secret1258', // Use environment variable for security
         { expiresIn: '1h' }
       );
+      const user = await User.findOne({email:email})
+      //create verification link
+      const VerificationCode = await Token.create({
+        userId:user._id, token: token
+      })
+
+      console.log(VerificationCode)
+      const verificationLink = `https://www.copixlab/${user._id}/verify/${VerificationCode}`
 
       // Prepare response data
       const response = {
@@ -148,6 +156,7 @@ app.post(
         email: newUser.email,
         name: newUser.firstname,
         token,
+        verificationLink: verificationLink,
         adminSubject: 'User Signup Alert',
         message: `A new user with the following details just signed up:\nName: ${firstName} ${lastName}\nEmail: ${email} \nlocation: ${country} \ndevice: ${deviceName}`,
         subject: 'Successful User Referral Alert',
