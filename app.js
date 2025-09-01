@@ -390,10 +390,11 @@ app.post('/api/fundwallet', async (req, res) => {
 })
 
 app.post('/api/debitwallet', async (req, res) => {
+  const email = req.body.email
+  console.log(email)
   const user = await User.findOne({ email: email })
-  if (req.body.amount >= user.funded) {
+  if (req.body.amount <= user.funded) {
     try {
-    const email = req.body.email
     const incomingAmount = req.body.amount
     
     await User.updateOne(
